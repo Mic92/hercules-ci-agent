@@ -1,10 +1,12 @@
 {-# LANGUAGE CPP #-}
-module Hercules.Agent.Compat where
+
+module Hercules.Agent.Compat (katipLevel) where
 
 import qualified Katip as K
 
-#if MIN_VERSION_katip(0,8,0)
 katipLevel :: K.Severity -> K.PermitFunc
+
+#if MIN_VERSION_katip(0,8,0)
 katipLevel =
   K.permitItem
 #else

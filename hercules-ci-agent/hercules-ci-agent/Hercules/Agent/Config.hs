@@ -91,19 +91,19 @@ embedJson :: Key -> TomlCodec A.Value
 embedJson key =
   Codec
     { codecRead =
-        codecRead (match (embedJsonBiMap key) key)
+        codecRead (match embedJsonBiMap key)
           <!> codecRead (A.Object <$> Toml.tableHashMap _KeyText embedJson key),
       codecWrite = panic "embedJson.write: not implemented" $ \case
         A.String s -> A.String <$> codecWrite (Toml.text key) s
         A.Number sci -> A.Number . fromRational . toRational <$> codecWrite (Toml.double key) (fromRational $ toRational sci)
         A.Bool b -> A.Bool <$> codecWrite (Toml.bool key) b
-        A.Array a -> A.Array . V.fromList <$> codecWrite (Toml.arrayOf (embedJsonBiMap key) key) (Protolude.toList a)
+        A.Array a -> A.Array . V.fromList <$> codecWrite (Toml.arrayOf embedJsonBiMap key) (Protolude.toList a)
         A.Object o -> A.Object <$> codecWrite (Toml.tableHashMap _KeyText embedJson key) o
         A.Null -> eitherToTomlState (Left ("null is not supported in TOML" :: Text))
     }
 
-embedJsonBiMap :: Key -> TomlBiMap A.Value AnyValue
-embedJsonBiMap key =
+embedJsonBiMap :: TomlBiMap A.Value AnyValue
+embedJsonBiMap =
   BiMap
     { forward = panic "embedJsonBiMap.forward: not implemented" $ \case
         A.String s -> pure $ AnyValue $ Text s
