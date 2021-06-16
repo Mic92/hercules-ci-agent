@@ -1,0 +1,3 @@
+[submodule "cachix"]
+	path = cachix
+	url = https://github.com/hercules-ci/cachix
